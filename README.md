@@ -1,6 +1,6 @@
 # GardenShare AI  
 Solo capstone project by **Adam L. Powell** – Project & Portfolio (Months 1–4)  
-**Milestone 1 video due:** Sunday, Nov 2, 2025 @ 10:59 PM CST.
+
 
 ## Introduction  
 GardenShare AI is a home-gardening companion powered by artificial intelligence. It helps gardeners plan beds, schedule plantings, swap surplus produce within a local community, and time crop cycles with weather-based alerts. By merging the joy of gardening with the precision of data, this project empowers growers to harvest more than just vegetables — they harvest connection and insight.
