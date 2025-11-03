@@ -73,3 +73,63 @@ This project is licensed under the **MIT License** – see the [LICENSE](LICENSE
 * Seed dataset is limited; more crop metadata needed
 * UI lacks mobile responsiveness in this alpha version
 * Weather API calls are currently mocked for demo purposes
+
+## Data Model & Backend Architecture
+
+### Data Model (Entity Relationship Diagram)
+
+Below is a simplified model of core entities for **GardenShare AI**:
+
+```
+User (id, name, email, zip, radius_km)
+  └─<has>─ Garden (id, userId, usdaZone, bedAreaSqFt)
+           └─<has many>─ Inventory (id, gardenId, plantId, qty, status {HAVE, WANT})
+                             └─<refers to>─ Plant (id, commonName, tags[], frostSensitivity, daysToMaturity, season)
+  Match (id, userAId, userBId, plantAId, plantBId, score, distanceKm, status)
+  TimingFlag (id, userId, plantId, type {PLANT_NOW, HARVEST_SOON, FROST_RISK}, generatedAt)
+```
+
+**Notes on relationships:**
+
+* A **User** can own one or more **Gardens**.
+* Each **Garden** has an **Inventory** of plants the user *Has* or *Wants*.
+* The **Plant** entity holds metadata used by the AI components (tags, maturity, season, frostSensitivity).
+* **Match** connects two users (via their inventories) for potential trades, with scoring and distance considerations.
+* **TimingFlag** captures AI-generated alerts for a given user & plant.
+
+### Backend Architecture Overview
+
+1. **Frontend**
+
+   * Built in Next.js (TypeScript) + Tailwind CSS for rapid UI scaffolding.
+   * Handles sign-in, garden profile edits, inventory views, match & timing notifications.
+
+2. **Backend/API Layer**
+
+   * Using Next.js API routes (or optionally FastAPI) to implement REST endpoints.
+   * Example endpoints: `POST /api/auth/login`, `GET /api/inventory`, `POST /api/match/generate`, `GET /api/timing/flags`.
+
+3. **Database & ORM**
+
+   * Primary storage: Prisma ORM on top of PostgreSQL (SQLite for dev fallback).
+   * Schema follows the data model above; Prisma migrations handle schema evolution.
+
+4. **AI/Logic Services**
+
+   * **Trade Recommender Service**: retrieves inventories, applies similarity logic (tags + season + quantity + distance), stores/updates Match entities.
+   * **Timing Advisor Service**: uses Plant metadata + weather forecast API + zip/usda zone logic → generates TimingFlag entries.
+
+5. **DevOps & Workflow**
+
+   * Version control: branches structured as `main` (release/demo), `dev` (integration), and `feature/<issue-key-short>` (task work).
+   * CI/CD: GitHub Actions runs lint, tests, deploys front/back to Vercel + Railway/Fly.io.
+   * Deployment: Frontend on Vercel, Backend/API on Railway/Fly.io; environment variables managed in `.env` or secret store.
+
+### How It All Fits Together
+
+* The user logs in via the Frontend → Backend Auth API → session.
+* The Frontend fetches Inventory & Plant data from API → Database.
+* User triggers “Generate Matches” → Trade Recommender Service computes and writes Match data.
+* Timing Advisor Service runs on schedule (cron/queue) using weather API + Plant metadata → writes TimingFlags.
+* Frontend displays Matches & TimingFlags to user, enabling informed action (swap or plant/harvest).
+* All code lives in `dev` branch, merged into `main` when ready for demo/submission.
