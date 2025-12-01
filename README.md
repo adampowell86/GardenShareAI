@@ -133,3 +133,74 @@ User (id, name, email, zip, radius_km)
 * Timing Advisor Service runs on schedule (cron/queue) using weather API + Plant metadata → writes TimingFlags.
 * Frontend displays Matches & TimingFlags to user, enabling informed action (swap or plant/harvest).
 * All code lives in `dev` branch, merged into `main` when ready for demo/submission.
+
+
+# GardenShare AI 🌿  
+
+**Status: Beta (active development, readying for user testing)**
+
+GardenShare AI is a home-gardening companion powered by data and — in future — AI support. It helps gardeners plan beds, track inventories (what they have vs what they need), schedule plantings/harvests with weather-based alerts, and swap or trade surplus produce or seeds within a local community. By merging the joy of gardening with data-driven tools and community exchange, GardenShare AI empowers growers to harvest more than just vegetables — they harvest connection, sustainability, and insight.
+
+---
+
+## 🧰 What GardenShare AI Does (Current Features & Progress)
+
+| Feature / Module | Status / Notes |
+|------------------|----------------|
+| Email/password user authentication & session management | ✅ Implemented |
+| Inventory management — “Have” items (add / edit / quantity / notes) | ✅ Implemented |
+| Backend API layer for users, inventories, matching, timing logic scaffold | ✅ Implemented |
+| Matching endpoint (backend) for potential trade suggestions | ✅ Available (`/matching/suggestions`) |
+| Front-end UI for login/signup + inventory (“Have Items” page) | ✅ Functional |
+| Project bootstrap & development workflow (local dev, DB migrations) | ✅ Documented and tested |
+
+---
+
+## 🚧 Planned Features (Coming This Month)
+
+With the move to **Beta**, the following tasks are prioritized to make GardenShare AI ready for initial user testing / integration next month:
+
+- **Social / OAuth login:** Allow sign-in with Google, Microsoft, Discord (and other providers) to reduce friction for new users.  
+- **“Need Items” inventory support:** Enable users to list what they *need* (seeds, supplies, produce) — not just what they have.  
+- **Matching UI & trade-suggestions front-end:** Display matches to users: “Here’s someone nearby who wants what you have.”  
+- **Trade-offer / exchange workflow (prototype):** Allow users to propose trades (their HAVE ↔ someone else’s NEED), send and respond to trade offers.  
+- **UI / UX polish & styling improvements:** Make the app visually clean, responsive, and user-friendly (forms, lists, navigation, mobile-friendly).  
+- **Error handling, input validation, and edge-case handling:** Prevent invalid input, handle missing data gracefully, ensure robust backend and frontend behavior.  
+- **Documentation & setup improvement:** Add/update docs (this README and possibly additional guides), prepare environment for testers / contributors.  
+
+---
+
+## 📥 Installation & Local Development
+
+Follow these steps to run GardenShare AI locally for development or testing:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/<your-username>/GardenShareAI.git
+cd GardenShareAI
+
+# 2. Install dependencies
+# (Use your package manager of choice: npm / yarn / pnpm)
+pnpm install        # or `npm install` / `yarn install`
+
+# 3. Configure environment variables
+# Copy or create `.env` (or `.env.local`) file and supply the required variables:
+# - DATABASE_URL
+# - JWT_SECRET
+# - CLIENT_ORIGIN (for frontend)
+# - (for OAuth) provider credentials as needed
+
+# 4. Setup database (if using Prisma / SQLite or other DB)
+npx prisma migrate dev     # or relevant migration command
+# (Optional) seed data if available, e.g. `npm run seed`
+
+# 5. Start backend server
+npm run dev       # Starts server (default port 4000)
+
+# 6. Start frontend client
+cd client         # if frontend is in separate folder
+npm run dev       # Starts client (e.g. Next.js / React app)
+
+# 7. Open your browser
+Visit http://localhost:5173 (or port configured) to access the app UI.
+
