@@ -1,73 +1,89 @@
 # GardenShare AI
 
-A solo capstone project by **Angela Powell** — Project & Portfolio (Months 1–4).  
-**Milestone 1 video due:** Sunday, Nov 2, 2025 @ 10:59 PM CST.
+GardenShare AI is a full-stack capstone app for local gardeners to:
+- Track what they have and need.
+- Get AI-assisted swap suggestions with nearby gardeners.
+- View planting and harvest timing flags based on profile, zone, and weather.
 
-## Elevator Pitch  
-GardenShare AI helps home gardeners plan beds, time plantings, and swap extra harvests with nearby growers. The app uses an AI recommender to match gardeners for trades (e.g., “your surplus basil ↔ my tomatoes”) and gives planting/harvest timing guidance using local weather and frost data.
+## Stack
+- Client: React + Vite + React Router
+- Server: Node.js + Express
+- Database: Prisma + SQLite (local dev)
+- Auth: Cookie-based JWT with refresh tokens + CSRF protection
 
-## Problem & Why Now  
-- Backyard and community gardeners overgrow some crops while lacking others.  
-- Planting windows and frost dates are tricky and weather-dependent.  
-- Local food exchange is fragmented across chats and ad-hoc groups.
+## Core Features
+- Email/password signup, login, logout, refresh flow
+- Optional OAuth provider integration hooks
+- HAVE and NEED inventory management
+- Trade creation and status updates
+- Matching/suggestions scoring service
+- Timing flags for planting and frost risk
+- Garden profile and plant catalog management
 
-## Goals (Month 1 MVP)  
-1. **AI Trade Recommender (v1)** — rule-based + similarity scoring to propose exchange matches between users’ *Have* and *Want* lists within a set radius.  
-2. **Planting Window Advisor (v1)** — basic logic that combines USDA-zone or zip with 10-day forecast to suggest “plant/harvest soon” flags per crop.  
-3. **Core Backend APIs** — users, gardens, plants, inventory, wants/haves, matches, and simple notifications.  
-4. **Auth** — email/password.  
-5. **Minimal UI** — for the demo: sign in, edit garden profile, add plants, see suggested trades & timing flags.
+## Project Structure
+- `client/` frontend app
+- `server/` API, Prisma schema/migrations, scripts, and tests
+- `.github/workflows/ci.yml` CI pipeline
 
-> Per mentor guidance: **prioritize backend + AI**. UI can be skeletal for Month 1.
+## Prerequisites
+- Node.js 20+
+- npm 10+
 
-## Non-Goals (Month 1)  
-- Payments, complex chat, marketplace, advanced ML, mobile app polish, geospatial clustering beyond simple radius.
+## Local Setup
 
-## AI Components  
-- **Trade Match (v1):** content-based similarity using plant taxonomy, companion/cuisine tags, seasonality; greedy matching that respects distance and quantity.  
-- **Timing Advisor (v1):** rules using crop metadata (days to maturity, frost sensitivity) + current/forecast temps to raise *PLANT_NOW*, *HARVEST_SOON*, *FROST_RISK* flags.
-
-## Architecture (proposed)  
-- **Frontend:** Next.js (TS), Tailwind (minimal).  
-- **Backend/API:** Next.js API routes or FastAPI.  
-- **DB:** PostgreSQL (Prisma ORM) or SQLite for local dev.  
-- **Auth:** NextAuth or Firebase Auth.  
-- **Jobs:** cron/queue.  
-- **Infra:** Vercel (frontend), Railway/Fly.io (API) — dev only.  
-- **Data:** seed `plants.csv` with common crops metadata.
-
-## Data Model (initial)  
-- `User(id, name, email, zip, radius_km)`  
-- `Garden(id, userId, usdaZone, bedAreaSqFt)`  
-- `Plant(id, commonName, tags[], frostSensitivity, daysToMaturity, season)`  
-- `Inventory(id, userId, plantId, qty, status: HAVE|WANT)`  
-- `Match(id, userA, userB, plantAId, plantBId, score, distanceKm, status)`  
-- `TimingFlag(id, userId, plantId, type: PLANT_NOW|HARVEST_SOON|FROST_RISK)`
-
-## MVP Demo Flow (what the video will show)  
-1. Move Jira cards to **Done** while narrating.  
-2. Create user → set `zip` & `radius`.  
-3. Add *Have* and *Want* items.  
-4. Run **Generate Matches** → show list with scores & distances.  
-5. Open **Timing Advisor** → show flags derived from forecast.  
-6. Minimal UI clicks or CLI/console output proving functionality.
-
-## Roadmap (by month)  
-- **Month 1 – MVP running**: AI v1, core APIs, seed data, skeletal UI, demo video.  
-- **Month 2 – Ready for user test**: better UI, persistence, notifications, CSV import, improved scoring.  
-- **Month 3 – User testing**: recruit 5–8 gardeners, feedback/metrics, iterate.  
-- **Month 4 – Polish & present**: stability, docs, final presentation.
-
-## Definition of Done (DoD)  
-- Unit tests for recommender & timing advisor pass.  
-- API endpoints return correct JSON.  
-- Demo script reliably shows end-to-end flow.  
-- Jira card has acceptance criteria and is linked to commit(s).
-
-## Getting Started (dev)  
+### 1) Server
 ```bash
-# repo bootstrap
-pnpm create next-app@latest gardenshare-ai --ts --eslint --app
-cd gardenshare-ai
-pnpm add @prisma/client prisma zod
-# …
+cd server
+cp .env.example .env
+npm install
+npm run prisma:generate
+npm run prisma:migrate
+npm run seed:plants
+npm run dev
+```
+
+### 2) Client
+```bash
+cd client
+cp .env.example .env
+npm install
+npm run dev
+```
+
+## Test and Build
+
+### Server
+```bash
+cd server
+npm test
+```
+
+### Client
+```bash
+cd client
+npm test -- --run
+npm run build
+```
+
+## Useful Scripts
+- `cd server && npm run seed:plants`
+- `cd server && npm run seed:test-user`
+- `cd server && npm run bench:matching`
+- `cd server && npm run prisma:migrate:deploy`
+
+## Environment Files
+- Server template: `server/.env.example`
+- Client template: `client/.env.example`
+
+Do not commit real `.env` files or local database artifacts.
+
+## CI
+GitHub Actions runs on push and pull request:
+- Server install + tests
+- Client install + tests + production build
+
+## Submission Status
+As of February 26, 2026:
+- Server tests passing
+- Client tests passing
+- Client production build passing

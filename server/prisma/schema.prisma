@@ -12,9 +12,22 @@ url = env("DATABASE_URL")
 model User {
 id String @id @default(cuid())
 email String @unique
-passwordHash String
+passwordHash String?
+name String?
+displayName String?
+location String?
+zip String?
+radiusKm Int?
+latitude Float?
+longitude Float?
+bio String?
+interests String?
 createdAt DateTime @default(now())
 items InventoryItem[]
+accounts Account[]
+gardens Garden[]
+timingFlags TimingFlag[]
+matches Match[]
 }
 
 
@@ -24,8 +37,116 @@ model InventoryItem {
   user      User     @relation(fields: [userId], references: [id])
   name      String
   qty       Int      @default(1)
-  status    String   @default("HAVE")  // store as string
+  status    String   @default("HAVE")
   notes     String?
+  plantId   String?
+  plant     Plant?   @relation(fields: [plantId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  timingFlags TimingFlag[]
+  haveTrades Trade[] @relation("HaveTrades")
+  needTrades Trade[] @relation("NeedTrades")
+  matchHaves Match[] @relation("MatchHave")
+  matchNeeds Match[] @relation("MatchNeed")
+
+  @@index([userId, status])
+  @@index([userId, updatedAt])
+  @@index([status])
+  @@index([plantId])
+}
+
+
+model Account {
+  id                String   @id @default(cuid())
+  provider          String
+  providerAccountId String
+  providerEmail     String?
+  providerName      String?
+  accessToken       String?
+  refreshToken      String?
+  expiresAt         Int?
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+}
+
+model Garden {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  name        String?
+  usdaZone    String?
+  bedAreaSqFt Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Plant {
+  id              String   @id @default(cuid())
+  commonName      String
+  tags            String?
+  frostSensitivity String?
+  daysToMaturity  Int?
+  season          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  items           InventoryItem[]
+}
+
+model TimingFlag {
+  id              String   @id @default(cuid())
+  userId          String
+  inventoryItemId String
+  type            String
+  createdAt       DateTime @default(now())
+
+  user           User          @relation(fields: [userId], references: [id])
+  inventoryItem  InventoryItem @relation(fields: [inventoryItemId], references: [id])
+
+  @@index([userId])
+}
+
+model Trade {
+  id          String   @id @default(cuid())
+  userAId     String
+  userBId     String
+  haveItemId  String
+  needItemId  String
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+
+  haveItem InventoryItem @relation("HaveTrades", fields: [haveItemId], references: [id])
+  needItem InventoryItem @relation("NeedTrades", fields: [needItemId], references: [id])
+
+  @@index([userAId])
+  @@index([userBId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([haveItemId])
+  @@index([needItemId])
+}
+
+model Match {
+  id         String   @id @default(cuid())
+  userId     String
+  haveItemId String
+  needItemId String
+  score      Int
+  distanceKm Float?
+  reasons    String?
+  breakdown  String?
+  status     String   @default("ACTIVE")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id])
+  haveItem InventoryItem @relation("MatchHave", fields: [haveItemId], references: [id])
+  needItem InventoryItem @relation("MatchNeed", fields: [needItemId], references: [id])
+
+  @@unique([userId, haveItemId, needItemId])
+  @@index([userId, score])
 }

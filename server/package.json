@@ -1,1 +1,33 @@
-{"name":"inventory-week2-server","version":"1.0.0","type":"module","scripts":{"dev":"node --watch ./src/server.js","prisma:generate":"prisma generate","prisma:migrate":"prisma migrate dev --name init","prisma:studio":"prisma studio"},"dependencies":{"@prisma/client":"^5.22.0","bcrypt":"^5.1.1","cookie-parser":"^1.4.6","cors":"^2.8.5","dotenv":"^16.4.5","express":"^4.19.2","express-rate-limit":"^7.4.0","jsonwebtoken":"^9.0.2","zod":"^3.23.8"},"devDependencies":{"prisma":"^5.22.0"}}
+{
+  "name": "gardenshareai-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch ./src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "seed:test-user": "node ./scripts/seed-test-user.js",
+    "seed:plants": "node ./scripts/seed-plants.js",
+    "bench:matching": "node ./scripts/benchmark-matching.js",
+    "test": "node --test",
+    "start": "node ./src/server.js"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-rate-limit": "^7.5.1",
+    "jose": "^5.10.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "prisma": "5.22.0"
+  }
+}
